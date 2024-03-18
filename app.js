@@ -1,30 +1,26 @@
-// OS Module
+const  http = require('http');
 
-// const os = require('os');
+const { readFileSync} = require('fs');
 
-// const user = {
-//     name:os.type(),
-//     release: os.release(),
-//     totalmem:os.totalmem(),
-//     freemem:os.freemem()
-// }
-// console.log(user);
-// console.log(`${os.uptime}`);
+const htmlpage = readFileSync('./index.html')
 
-// FS Module
-
-// const { readFileSync, writeFileSync } = require('fs');
-
-// const readit = readFileSync('./content/firest.txt','utf8');
-// console.log(readit);
-
-// const writenew = writeFileSync('content/new-writefile.txt', `I am created by ${readit}`);
-// console.log(writenew);
-
-const {readFile} = require('fs');
-
-readFile('./content/firest.txt','utf8',(err,res) => {
-    if(err){
-        console.log(err);
+http.createServer((req,res) =>{ 
+    const url = req.url;
+    if(url==='/'){
+        res.writeHead(200,{'content-type' : 'text/html'});
+        res.write(htmlpage);
+        res.end();
+    }
+    else if(url==='/contact') {
+        res.writeHead(200,{'content-type' : 'text/html'});
+        res.write(`<h1>Contact</h1>`);
+        res.end();
+    }
+    else {
+        res.writeHead(404,{'content-type' : 'text/html'});
+        res.write(`<h1>Page Not Found</h1>
+        <a href='/'>Go Back</a>`);
+        res.end();
     }
 })
+.listen(5000)
