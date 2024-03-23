@@ -1,26 +1,56 @@
-const  http = require('http');
+const  express  = require('express');
+const app = express();
+let products = require('./dummy.js');
+const bodyParser = require('body-parser');
 
-const { readFileSync} = require('fs');
+app.use(bodyParser.json())
 
-const htmlpage = readFileSync('./index.html')
+app.use(express.static('./app'))
 
-http.createServer((req,res) =>{ 
-    const url = req.url;
-    if(url==='/'){
-        res.writeHead(200,{'content-type' : 'text/html'});
-        res.write(htmlpage);
-        res.end();
-    }
-    else if(url==='/contact') {
-        res.writeHead(200,{'content-type' : 'text/html'});
-        res.write(`<h1>Contact</h1>`);
-        res.end();
+app.use(express.urlencoded({extended: false}))
+
+app.put('/api/chcompany/:order',(req,res) => {
+    const { order} = req.params;
+    console.log(order);
+    const { company } = req.body;
+    console.log(company);
+    const product = products.find((product) => product.order == Number(order))
+    if(!product){
+        return res.status(401).send(`<h1>Wrong ${order}</h1>`);
     }
     else {
-        res.writeHead(404,{'content-type' : 'text/html'});
-        res.write(`<h1>Page Not Found</h1>
-        <a href='/'>Go Back</a>`);
-        res.end();
+        const upproduct = products.map(product => {
+            product.company = company;
+            return product;
+        });
+        res.status(200).json({success: true, data : upproduct})
+    }
+
+
+})
+
+app.post('/login',(req,res) => {
+
+    const { title, id, ordernum, dates, duties, company } = req.body;
+    if(title){
+        const newProduct = {
+            id: id,
+            order: ordernum,
+            title: title,
+            dates: dates,
+            duties: duties, // Assuming duties is a single string, wrap it in an array
+            company: company
+        };
+        const addtoproducts = [newProduct]
+        products = [...addtoproducts]
+        console.log(products);
+        res.status(200).send(`<h1>Welocme Dear. ${newProduct.company} </h1>`);
+    }
+    else{
+        res.status(401).send('Bad Request')
     }
 })
-.listen(5000)
+
+app.listen(5000, ()=> {
+    console.log('Port Request 5000 listening')
+})

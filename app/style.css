@@ -1,0 +1,16 @@
+label{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.h1-font{
+    text-align: center; 
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.input-data{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background-color: blue;
+}
